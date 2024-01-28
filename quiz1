@@ -1,0 +1,162 @@
+1 . Remove duplicates from sorted arrays
+#include <stdio.h>
+
+int removeDuplicates(int* nums, int numsSize) {
+    if (numsSize == 0) return 0;
+    
+    int unique_count = 1; // Initialize with the first element being unique
+    
+    for (int i = 1; i < numsSize; i++) {
+        if (nums[i] != nums[i - 1]) {
+            nums[unique_count] = nums[i]; // Update the array with unique elements
+            unique_count++;
+        }
+    }
+    
+    return unique_count;
+}
+
+int main() {
+    int nums[] = {1, 1, 2, 2, 3, 4, 4, 5};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    
+    int new_length = removeDuplicates(nums, numsSize);
+    
+    printf("New length: %d\n", new_length);
+    printf("Modified array: ");
+    for (int i = 0; i < new_length; i++) {
+        printf("%d ", nums[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}
+
+QUESTION 2(rotate arrays)
+#include <stdio.h>
+
+void rotate(int* nums, int numsSize, int k) {
+    if (numsSize <= 1) return;
+    
+    k %= numsSize; // Adjust k if it's greater than numsSize
+    
+    // Reverse the whole array
+    for (int i = 0, j = numsSize - 1; i < j; i++, j--) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+    
+    // Reverse the first k elements
+    for (int i = 0, j = k - 1; i < j; i++, j--) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+    
+    // Reverse the rest of the elements
+    for (int i = k, j = numsSize - 1; i < j; i++, j--) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}
+
+int main() {
+    int nums[] = {1, 2, 3, 4, 5};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int k = 2;
+    
+    rotate(nums, numsSize, k);
+    
+    printf("Rotated array: ");
+    for (int i = 0; i < numsSize; i++) {
+        printf("%d ", nums[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}
+
+QUESTION 3(CONTAINS DUPLICATE)
+#include <stdio.h>
+
+#define HASH_SIZE 10000 // Assuming the range of integers is within this limit
+
+typedef struct {
+    int key;
+    int value;
+} Entry;
+
+typedef struct {
+    Entry data[HASH_SIZE];
+} HashSet;
+
+int hash(int key) {
+    return (key % HASH_SIZE + HASH_SIZE) % HASH_SIZE;
+}
+
+void add(HashSet* set, int key) {
+    int index = hash(key);
+    while (set->data[index].value != -1) {
+        index = (index + 1) % HASH_SIZE; // Linear probing
+    }
+    set->data[index].key = key;
+    set->data[index].value = 1;
+}
+
+int containsDuplicate(int* nums, int numsSize) {
+    HashSet set;
+    for (int i = 0; i < HASH_SIZE; i++) {
+        set.data[i].value = -1; // Initialize all values as -1
+    }
+    
+    for (int i = 0; i < numsSize; i++) {
+        int key = nums[i];
+        int index = hash(key);
+        while (set.data[index].value != -1) {
+            if (set.data[index].key == key) {
+                return 1; // Found duplicate
+            }
+            index = (index + 1) % HASH_SIZE; // Linear probing
+        }
+        add(&set, key);
+    }
+    
+    return 0; // No duplicates found
+}
+
+int main() {
+    int nums[] = {1, 2, 3, 4, 5, 1};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    
+    if (containsDuplicate(nums, numsSize)) {
+        printf("Array contains duplicates.\n");
+    } else {
+        printf("Array does not contain duplicates.\n");
+    }
+    
+    return 0;
+}
+
+QUESTION 4(SINGLE NUMBER)
+#include <stdio.h>
+
+int singleNumber(int* nums, int numsSize) {
+    int result = 0;
+    for (int i = 0; i < numsSize; i++) {
+        result ^= nums[i]; // XOR operation to find the single number
+    }
+    return result;
+}
+
+int main() {
+    int nums[] = {4, 1, 2, 1, 2};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    
+    int single = singleNumber(nums, numsSize);
+    
+    printf("Single number: %d\n", single);
+    
+    return 0;
+}
